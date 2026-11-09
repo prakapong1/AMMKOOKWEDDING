@@ -352,6 +352,36 @@
   .legend a{font-size:12px;padding:7px 8px}
   .mkey{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 12px;margin-top:10px;font-size:11.5px;color:var(--ink-soft)}
   .mkey i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:middle}
+  .music{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:50;width:38px;height:38px;border-radius:50%;
+    border:1px solid #dcb5ab;background:rgba(255,255,255,.55);color:var(--peach-d);font-size:17px;cursor:pointer;line-height:1}
+  .music.on{background:var(--peach-d);color:#fff;animation:spin 6s linear infinite}
+  @keyframes spin{to{transform:translateX(-50%) rotate(360deg)}}
+  .cv2 .cdh{margin-top:30px;font:400 12px 'Jost',sans-serif;letter-spacing:6px;text-transform:uppercase;color:var(--peach-d)}
+  .cv2 .cd{display:flex;gap:10px;margin-top:10px}
+  .cv2 .cdu{width:62px;padding:9px 0 7px;border-radius:14px;background:rgba(255,255,255,.55);border:1px solid #e6c4bb;display:flex;flex-direction:column;align-items:center}
+  .cv2 .cdu b{font:300 24px 'Jost','Prompt',sans-serif;color:var(--ink);line-height:1.1;font-variant-numeric:tabular-nums}
+  .cv2 .cdu span{font:400 10.5px 'Prompt','Jost',sans-serif;color:var(--ink-soft);letter-spacing:.5px}
+  .cv2 .cdl{margin-top:10px;font:300 11.5px 'Prompt','Jost',sans-serif;color:var(--ink-soft);letter-spacing:.3px}
+  .rsvp-btn{display:block;margin:8px auto 0;padding:8px 22px;border-radius:999px;border:0;background:var(--peach-d);color:#fff;
+    font:500 14px 'Prompt','Jost',sans-serif;letter-spacing:.5px;cursor:pointer;box-shadow:0 3px 10px rgba(162,104,93,.25)}
+  .rsvp{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;background:rgba(80,50,45,.35);backdrop-filter:blur(3px);padding:20px}
+  .rsvp.open{display:flex}
+  .rsvp-card{position:relative;width:min(100%,360px);background:#fffaf6;border-radius:20px;padding:26px 22px 20px;box-shadow:0 20px 50px rgba(80,50,45,.3);
+    font-family:'Prompt','Jost',sans-serif;color:var(--ink);display:flex;flex-direction:column;gap:12px}
+  .rsvp-x{position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;color:var(--ink-soft);cursor:pointer}
+  .rsvp-h{font-size:20px;text-align:center;color:var(--peach-d)}
+  .rsvp-sub{font-size:12.5px;text-align:center;color:var(--ink-soft);margin-top:-6px}
+  .rsvp-card label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--ink-soft)}
+  .rsvp-card input,.rsvp-card select{font:400 15px 'Prompt',sans-serif;color:var(--ink);padding:10px 12px;border-radius:12px;border:1px solid #e6c4bb;background:#fff;outline:none;-webkit-appearance:none;appearance:none}
+  .rsvp-card select{background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23a2685d' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 12px center}
+  .rsvp-card input:focus,.rsvp-card select:focus{border-color:var(--peach-d)}
+  .rsvp-go{margin-top:4px;padding:11px;border:0;border-radius:999px;background:var(--peach-d);color:#fff;font:500 15px 'Prompt',sans-serif;cursor:pointer}
+  .rsvp-go:disabled{opacity:.6}
+  .rsvp-msg{font-size:13px;text-align:center;min-height:1em;color:var(--peach-d)}
+  .p-inv .rsvp-btn{margin:6px auto 0;padding:6px 20px;font-size:13.5px}
+  .p-inv .sched-h{font-size:17px;margin:0 0 2px}
+  .p-inv .tl{padding:3px 2px}
+  .p-inv .ilogo{width:50px}
   /* nav */
   .nav{display:flex;align-items:center;gap:16px;margin-top:12px;z-index:2}
   .nav button{width:42px;height:42px;border-radius:50%;border:1px solid #d9b0a5;background:rgba(255,255,255,.35);
@@ -368,12 +398,25 @@
   <button class="b1" data-t="blush" title="Blush"></button>
   <button class="b2" data-t="water" title="Watercolor"></button>
 </div>
+<button class="music" id="musicBtn" aria-label="Music">♪</button>
 <div class="lang" role="group" aria-label="Language">
   <button data-l="th" class="on">ไทย</button>
   <button data-l="en">EN</button>
 </div>
 
 <div class="book" id="book"></div>
+<div class="rsvp" id="rsvp" aria-hidden="true">
+  <form class="rsvp-card" id="rsvpForm">
+    <button type="button" class="rsvp-x" data-close aria-label="close">×</button>
+    <div class="rsvp-h" id="rsvpH"></div>
+    <div class="rsvp-sub" id="rsvpSub"></div>
+    <label><span id="lName"></span><input name="name" required maxlength="80" autocomplete="name"></label>
+    <label><span id="lCount"></span><select name="count" required></select></label>
+    <label><span id="lSide"></span><select name="side" required></select></label>
+    <button type="submit" class="rsvp-go" id="rsvpGo"></button>
+    <div class="rsvp-msg" id="rsvpMsg" role="status"></div>
+  </form>
+</div>
 <div class="nav">
   <button id="prev" aria-label="Previous">‹</button>
   <div class="dots" id="dots"></div>
@@ -465,10 +508,6 @@ const W = {
      desc:{th:"โรงแรมใหม่สไตล์มินิมอล ห้องกว้าง มีคาเฟ่ BEGIIN สำหรับอาหารเช้า ใกล้พระรามราชนิเวศน์ (ไม่มีลิฟต์)",en:"New minimalist hotel with spacious rooms and BEGIIN café for breakfast, near Ban Puen Palace (no lift)."},
      addr:{th:"169 ม.6 ต.ต้นมะม่วง อ.เมือง",en:"169 Moo 6, Ton Mamuang"},
      tel:"082-926-9919", book:"https://www.agoda.com/search?textToSearch=WIIN%20Phetchaburi", bookLbl:{th:"จองผ่าน Agoda",en:"Book on Agoda"}, q:"WIIN Phetchaburi"},
-    {km:"6", min:"11", name:"Phetkasem Hotel (เพชรเกษมโฮเต็ล)", price:{th:"สอบถามราคา",en:"Ask for rates"},
-     desc:{th:"โรงแรมริมถนนเพชรเกษม เดินไปเขาวังได้ราว 10 นาที มีที่จอดรถฟรี อาหารเช้ามีค่าใช้จ่ายเพิ่ม",en:"On Phet Kasem Road, about a 10-minute walk to Khao Wang. Free parking; breakfast at extra cost."},
-     addr:{th:"86/4 ถ.เพชรเกษม ต.ไร่ส้ม อ.เมือง",en:"86/4 Phet Kasem Rd, Rai Som"},
-     tel:"032-425-581", q:"Phetkasem Hotel Phetchaburi"},
     {km:"7", min:"14", name:"Mintara Phetburi (โรงแรมมินธารา)", price:{th:"ดูราคาใน Agoda",en:"See rates on Agoda"},
      desc:{th:"โรงแรมในตัวเมืองติดแม่น้ำเพชรบุรี ร่มรื่น มี Me Cafe' ในโรงแรม ใกล้ร้านอาหารริมน้ำหลายร้าน",en:"Leafy riverside hotel in town with Me Cafe' on site and riverside restaurants nearby."},
      addr:{th:"ริมแม่น้ำเพชรบุรี อ.เมือง",en:"Riverside, Mueang Phetchaburi"},
@@ -513,7 +552,7 @@ const UI = {
   p2s:{th:"ระยะทางจากงานเลี้ยง · แนะนำจองล่วงหน้า",en:"Distance & drive time from the venue · please book ahead"},
   p4:{th:"แผนที่การเดินทาง",en:"Getting Around"},
   p4s:{th:"งานเช้า · งานเลี้ยง · ที่เที่ยว · โรงแรม",en:"Ceremonies · reception · sights · hotels"},
-  mapNote:{th:"แผนที่โดยสังเขป ไม่ตามมาตราส่วน · แตะชื่อเพื่อเปิด Google Maps",en:"Not to scale · tap a place to open Google Maps"},
+  mapNote:{th:"ตำแหน่งอ้างอิงพิกัดจริง · แตะหมุดหรือชื่อเพื่อเปิด Google Maps",en:"Positions based on real coordinates · tap a pin or name to open Google Maps"},
   p3:{th:"เที่ยวเมืองเพชร",en:"Explore Phetchaburi"},
   p3s:{th:"ไหว้พระ ชมเมือง",en:"Temples & views"},
   route:{th:"นำทางไปงาน",en:"Route to venue"},
@@ -685,25 +724,24 @@ const ART={
 
 const PIN={venue:"#c0605a",home:"#d08a5a",temple:"#9a7bbf",sight:"#5f9a6b",hotel:"#5b93b3",food:"#e08a3c"};
 const MAPPTS=[
-  {k:"venue", x:66, y:250, th:"ศรีสรรค์ คาเฟ่ (งานเลี้ยงเย็น)", en:"Seasand Cafe (Reception)", url:"https://maps.app.goo.gl/HQQ1tSGciZHHWjpK7", ico:"venue", lx:66, ly:290},
-  {k:"home",  x:170,y:92,  th:"บ้านเจ้าสาว (งานเช้า)", en:"Bride's Home (Morning)", url:"https://maps.app.goo.gl/c4Dmy45MH7zgEjKn6", ico:"house", lx:170, ly:130},
-  {k:"temple",x:196,y:190, th:"วัดถ้ำเขาหลวง", en:"Tham Khao Luang", q:"ถ้ำเขาหลวง เพชรบุรี", ico:"cave", lx:166, ly:222},
-  {k:"sight", x:232,y:288, th:"เขาวัง", en:"Khao Wang", q:"Phra Nakhon Khiri Historical Park", ico:"palace", lx:206, ly:322},
-  {k:"temple",x:244,y:246, th:"วัดข่อย", en:"Wat Khoi", q:"วัดข่อย เพชรบุรี", ico:"chedi", lx:254, ly:238},
-  {k:"temple",x:236,y:352, th:"วัดพระนอน", en:"Reclining Buddha", q:"วัดพระพุทธไสยาสน์ เพชรบุรี", ico:"recline", lx:244, ly:402},
-  {k:"temple",x:300,y:300, th:"วัดมหาธาตุ", en:"Wat Mahathat", q:"Wat Mahathat Worawihan Phetchaburi", ico:"prang", lx:312, ly:336},
-  {k:"food", x:108,y:180, th:"ป้าหยัน", en:"Pa Yan", q:"ป้าหยัน ร้านอาหารไทยเพชรบุรี"},
-  {k:"food", x:182,y:300, th:"บ้านขนมนันทวัน", en:"Nanthawan", q:"บ้านขนมนันทวัน เขาวัง"},
-  {k:"food", x:262,y:302, th:"Cosmic Cafe", en:"Cosmic Cafe", q:"Cosmic cafe Cable Car Phetchaburi"},
-  {k:"food", x:206,y:218, th:"พิเศษ กาแฟ", en:"Phiset Coffee", q:"พิเศษ กาแฟ Specialty Coffee เพชรบุรี"},
-  {k:"food", x:280,y:330, th:"ข้าวแช่ป้าเอื้อน", en:"Khao Chae Pa Euan", url:"https://goo.gl/maps/TPWXEN1CmkGuCh6Y7"},
-  {k:"food", x:268,y:356, th:"โอวทึ้งนายกี๋", en:"O-Thueng Nai Kee", q:"โอวทึ้งนายกี๋ เพชรบุรี"},
-  {k:"food", x:150,y:330, th:"ลุงอเนก ขนมหวาน", en:"Loong Anek Desserts", q:"โรงงานลุงอเนก ขนมหวานเมืองเพ็ชร์"},
-  {k:"hotel", x:296,y:376, th:"The Cozy", en:"The Cozy", q:"The Cozy Hotel Phetchaburi"},
-  {k:"hotel", x:288,y:196, th:"HOP INN", en:"HOP INN", q:"HOP INN Phetchaburi"},
-  {k:"hotel", x:332,y:392, th:"WIIN", en:"WIIN", q:"WIIN Phetchaburi"},
-  {k:"hotel", x:196,y:252, th:"เพชรเกษม", en:"Phetkasem", q:"Phetkasem Hotel Phetchaburi"},
-  {k:"hotel", x:322,y:268, th:"มินธารา", en:"Mintara", q:"Mintara Phetburi"}
+  {k:"venue", x:54, y:209, lx:62, ly:252, th:"ศรีสรรค์ คาเฟ่ (งานเย็น)", en:"Seasand Cafe", url:"https://maps.app.goo.gl/HQQ1tSGciZHHWjpK7", ico:"venue"},
+  {k:"home",  x:165,y:80,  lx:165,ly:122, th:"บ้านเจ้าสาว (งานเช้า)", en:"Bride's Home (Morning)", url:"https://maps.app.goo.gl/c4Dmy45MH7zgEjKn6", ico:"house"},
+  {k:"temple",x:230,y:118, lx:236,ly:160, th:"วัดถ้ำเขาหลวง", en:"Tham Khao Luang", q:"ถ้ำเขาหลวง เพชรบุรี", ico:"cave"},
+  {k:"sight", x:245,y:230, lx:150,ly:356, co:1, th:"เขาวัง", en:"Khao Wang", q:"Phra Nakhon Khiri Historical Park", ico:"palace"},
+  {k:"temple",x:257,y:214, lx:208,ly:356, co:1, th:"วัดข่อย", en:"Wat Khoi", q:"วัดข่อย เพชรบุรี", ico:"chedi"},
+  {k:"temple",x:264,y:244, lx:266,ly:356, co:1, th:"วัดพระนอน", en:"Reclining Buddha", q:"วัดพระพุทธไสยาสน์ เพชรบุรี", ico:"recline"},
+  {k:"temple",x:280,y:256, lx:326,ly:356, co:1, th:"วัดมหาธาตุ", en:"Wat Mahathat", q:"Wat Mahathat Worawihan Phetchaburi", ico:"prang"},
+  {k:"food", x:155,y:267, th:"ป้าหยัน", en:"Pa Yan", q:"ป้าหยัน ร้านอาหารไทยเพชรบุรี"},
+  {k:"food", x:229,y:219, th:"บ้านขนมนันทวัน", en:"Nanthawan", q:"บ้านขนมนันทวัน เขาวัง"},
+  {k:"food", x:213,y:233, th:"Cosmic Cafe", en:"Cosmic Cafe", q:"Cosmic cafe Cable Car Phetchaburi"},
+  {k:"food", x:224,y:190, th:"พิเศษ กาแฟ", en:"Phiset Coffee", q:"พิเศษ กาแฟ Specialty Coffee เพชรบุรี"},
+  {k:"food", x:316,y:238, th:"ข้าวแช่ป้าเอื้อน", en:"Khao Chae Pa Euan", url:"https://goo.gl/maps/TPWXEN1CmkGuCh6Y7"},
+  {k:"food", x:296,y:240, th:"โอวทึ้งนายกี๋", en:"O-Thueng Nai Kee", q:"โอวทึ้งนายกี๋ เพชรบุรี"},
+  {k:"food", x:251,y:297, th:"ลุงอเนก ขนมหวาน", en:"Loong Anek Desserts", q:"โรงงานลุงอเนก ขนมหวานเมืองเพ็ชร์"},
+  {k:"hotel", x:288,y:200, th:"The Cozy", en:"The Cozy", q:"The Cozy Hotel Phetchaburi"},
+  {k:"hotel", x:280,y:118, th:"HOP INN", en:"HOP INN", q:"HOP INN Phetchaburi"},
+  {k:"hotel", x:336,y:267, th:"WIIN", en:"WIIN", q:"WIIN Phetchaburi"},
+  {k:"hotel", x:304,y:218, th:"มินธารา", en:"Mintara", q:"Mintara Phetburi"}
 ];
 const MICO={
  venue:`<path d="M-16 6h32v12h-32Z" fill="#fff6ee" stroke="#a86a5f"/><path d="M-19 7L0 -10L19 7Z" fill="#f2b8b0" stroke="#a86a5f"/><path d="M-6 18v-7h12v7" fill="#f7d9a8" stroke="#a86a5f"/><path d="M0 -14c-2-3-6-1-4 2l4 4 4-4c2-3-2-5-4-2Z" fill="#e06a6a"/>`,
@@ -718,30 +756,39 @@ function mapPage(){
   const url=p=>p.url||mapURL(p.q);
   const nums=[]; let n=0; MAPPTS.forEach(p=>nums.push(p.k==="venue"?"♥":p.k==="home"?"⌂":p.k==="hotel"?"H":++n));
   const lab=(x,y,t,size=9.5,c="#5b4a48",w=600)=>`<text x="${x}" y="${y}" text-anchor="middle" font-size="${size}" font-weight="${w}" fill="${c}" font-family="Prompt" paint-order="stroke" stroke="#fffbea" stroke-width="3" stroke-linejoin="round">${t}</text>`;
-  const pin=(p,i)=>`<a href="${url(p)}" target="_blank" rel="noopener"><g transform="translate(${p.ico?p.lx:p.x} ${p.ico?p.ly-44:p.y})">
+  const small=k=>k==="food"||k==="hotel";
+  const pin=(p,i)=>`<a href="${url(p)}" target="_blank" rel="noopener"><g transform="translate(${p.x} ${p.y}) scale(${small(p.k)?.78:1})">
       ${p.k==="venue"?`<circle cy="-14" r="18" fill="${PIN.venue}" opacity=".18"><animate attributeName="r" values="12;22;12" dur="2.4s" repeatCount="indefinite"/></circle>`:""}
       <path d="M0 0C-8 -9 -10 -13 -10 -17A10 10 0 0 1 10 -17C10 -13 8 -9 0 0Z" fill="${PIN[p.k]}" stroke="#fff" stroke-width="1.6"/>
       <text y="-13.5" text-anchor="middle" font-size="${p.k==="hotel"?8.5:10}" font-weight="700" fill="#fff" font-family="Jost,Prompt">${nums[i]}</text></g></a>`;
-  const ill=MAPPTS.filter(p=>p.ico).map(p=>`<a href="${url(p)}" target="_blank" rel="noopener"><g transform="translate(${p.lx} ${p.ly-26})">${MICO[p.ico]}</g>${lab(p.lx,p.ly+3,lang==="th"?p.th:p.en,p.k==="venue"||p.k==="home"?10:9.5,p.k==="venue"?"#b0544e":p.k==="home"?"#b06a3e":"#5b4a48")}</a>`).join("");
-  const tree=(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect x="-1" y="0" width="2" height="6" fill="#9a7a5a"/><circle cy="-3" r="5" fill="#8cc58a"/><circle cx="4" cy="-1" r="4" fill="#7db87c"/></g>`;
-  const shield=(x,y,t)=>`<g transform="translate(${x} ${y})"><rect x="-11" y="-7" width="22" height="13" rx="3" fill="#fff" stroke="#9a9a9a"/><text y="3" text-anchor="middle" font-size="8.5" font-weight="600" fill="#555" font-family="Jost">${t}</text></g>`;
-  return `<div class="map"><svg viewBox="0 0 360 430" role="img" aria-label="map">
-    <defs><filter id="mpaper"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 .5 0 0 0 0 .45 0 0 0 0 .3 0 0 0 .06 0"/><feComposite in2="SourceGraphic" operator="in"/></filter></defs>
-    <rect width="360" height="430" rx="16" fill="#f7f0d2"/>
-    <path d="M0 150C60 130 90 170 140 160S230 120 290 150S340 140 360 130V0H0Z" fill="#eaf0cf"/>
-    <ellipse cx="80" cy="380" rx="90" ry="50" fill="#e4eec8"/><ellipse cx="190" cy="200" rx="40" ry="26" fill="#dbe9c0"/>
-    <path d="M318 0C300 60 330 110 310 170S286 240 304 300S330 380 300 430" stroke="#9ed2e6" stroke-width="16" fill="none" stroke-linecap="round"/>
-    <path d="M318 0C300 60 330 110 310 170S286 240 304 300S330 380 300 430" stroke="#c8e8f3" stroke-width="7" fill="none" stroke-linecap="round"/>
-    <path d="M0 262C60 262 110 270 160 268S215 270 240 266S300 262 360 258" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round"/>
-    <path d="M222 0C214 80 222 160 220 240S226 360 214 430" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round"/>
-    <path d="M170 92C176 140 190 170 200 190S214 230 220 250" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="0"/>
-    <path d="M66 250C120 262 170 268 220 266" stroke="#e06a6a" stroke-width="2" fill="none" stroke-dasharray="4 4" opacity=".7"/>
-    <path d="M220 270C250 280 280 296 300 300" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/>
-    ${shield(226,40,"4")}
-    <text x="333" y="120" font-size="8.5" fill="#4f93b3" font-family="Prompt" transform="rotate(76 333 120)">${lang==="th"?"แม่น้ำเพชรบุรี":"Phetchaburi River"}</text>
-    ${tree(40,60)}${tree(62,74,.8)}${tree(120,40,.9)}${tree(270,100,.9)}${tree(30,390,1.1)}${tree(150,410,.9)}${tree(110,330,.8)}${tree(345,350,.8)}${tree(268,140,.7)}
-    <g transform="translate(36 30)"><circle r="13" fill="#fff" stroke="#e0cfa8"/><path d="M0 -9L4 2L0 0L-4 2Z" fill="#c0605a"/><text y="10" text-anchor="middle" font-size="6.5" fill="#8a7774" font-family="Jost">N</text></g>
-    ${lab(120,418,lang==="th"?"ตัวเมืองเพชรบุรีอยู่ทางขวา →":"Phetchaburi Town →",9,"#b08a4a",500)}
+  const ico=MAPPTS.filter(p=>p.ico);
+  const leaders=ico.filter(p=>p.co).map(p=>`<path d="M${p.x} ${p.y}C${p.x} ${(p.y+p.ly)/2} ${p.lx} ${(p.y+p.ly)/2} ${p.lx} ${p.ly-44}" stroke="${PIN[p.k]}" stroke-width="1" stroke-dasharray="2 3" fill="none" opacity=".8"/>`).join("");
+  const ill=ico.map(p=>`<a href="${url(p)}" target="_blank" rel="noopener"><g transform="translate(${p.lx} ${p.ly-26})">${MICO[p.ico]}</g>${lab(p.lx,p.ly+3,lang==="th"?p.th:p.en,p.k==="venue"||p.k==="home"?10:9.5,p.k==="venue"?"#b0544e":p.k==="home"?"#b06a3e":"#5b4a48")}</a>`).join("");
+  const tree=(x,y,sc=1)=>`<g transform="translate(${x} ${y}) scale(${sc})"><rect x="-1" y="0" width="2" height="6" fill="#9a7a5a"/><circle cy="-3" r="5" fill="#8cc58a"/><circle cx="4" cy="-1" r="4" fill="#7db87c"/></g>`;
+  const shield=(x,y,t)=>`<g transform="translate(${x} ${y})"><rect x="-9" y="-7" width="18" height="13" rx="3" fill="#fff" stroke="#9a9a9a"/><text y="3" text-anchor="middle" font-size="8.5" font-weight="600" fill="#555" font-family="Jost">${t}</text></g>`;
+  // scale bar: 1 km ≈ 38px
+  return `<div class="map"><svg viewBox="0 0 360 390" role="img" aria-label="map">
+    <rect width="360" height="390" rx="16" fill="#f7f0d2"/>
+    <rect y="300" width="360" height="90" fill="#fbf7e6"/>
+    <path d="M0 140C60 120 100 150 150 140S240 100 300 130S350 120 360 110V0H0Z" fill="#eaf0cf"/>
+    <ellipse cx="230" cy="112" rx="26" ry="16" fill="#cfe2b4"/>
+    <ellipse cx="246" cy="226" rx="20" ry="13" fill="#bcd9a6"/>
+    <path d="M305 0C302 60 312 110 306 160S300 220 306 250S318 290 318 300" stroke="#9ed2e6" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <path d="M305 0C302 60 312 110 306 160S300 220 306 250S318 290 318 300" stroke="#c8e8f3" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M209 0C210 60 206 140 210 200S214 260 212 300" stroke="#fff" stroke-width="8" fill="none"/>
+    <path d="M54 209C110 212 160 214 210 216" stroke="#fff" stroke-width="6" fill="none"/>
+    <path d="M210 222C240 236 270 244 306 246S330 250 360 252" stroke="#fff" stroke-width="6" fill="none"/>
+    <path d="M165 80C185 84 198 88 209 92" stroke="#fff" stroke-width="5" fill="none"/>
+    <path d="M209 128C218 124 224 120 230 118" stroke="#fff" stroke-width="4" fill="none"/>
+    <path d="M54 209C110 212 160 214 210 216" stroke="#e06a6a" stroke-width="1.6" fill="none" stroke-dasharray="4 4" opacity=".7"/>
+    ${shield(209,30,"4")}
+    <text x="320" y="70" font-size="8" fill="#4f93b3" font-family="Prompt" transform="rotate(86 320 70)">${lang==="th"?"แม่น้ำเพชรบุรี":"Phetchaburi River"}</text>
+    ${tree(40,60)}${tree(62,74,.8)}${tree(110,40,.9)}${tree(270,80,.8)}${tree(30,290,1)}${tree(110,250,.8)}${tree(345,180,.8)}${tree(100,170,.7)}
+    <g transform="translate(34 30)"><circle r="13" fill="#fff" stroke="#e0cfa8"/><path d="M0 -9L4 2L0 0L-4 2Z" fill="#c0605a"/><text y="10" text-anchor="middle" font-size="6.5" fill="#8a7774" font-family="Jost">N</text></g>
+    <g transform="translate(24 288)"><path d="M0 0h38" stroke="#8a7774" stroke-width="2"/><path d="M0 -3v6M38 -3v6" stroke="#8a7774"/><text x="19" y="-5" text-anchor="middle" font-size="7.5" fill="#8a7774" font-family="Jost">1 km</text></g>
+    ${lab(304,286,lang==="th"?"ตัวเมือง":"Town",9,"#b08a4a",500)}
+    <line x1="14" y1="304" x2="346" y2="304" stroke="#e8dcb8" stroke-dasharray="3 3"/>
+    ${leaders}
     ${ill}
     ${MAPPTS.map((p,i)=>pin(p,i)).join("")}
   </svg>
@@ -757,6 +804,9 @@ function pages(){
   ${mono("cvlogo")}
   <div class="nm2">Jantima <span>&amp;</span> Werachai</div>
   <div class="dt2">09 January 2027</div>
+  <div class="cdh">Countdown</div>
+  <div class="cd" id="cd">${["d","h","m","s"].map(u=>`<div class="cdu"><b data-u="${u}">--</b><span>${({d:{th:"วัน",en:"Days"},h:{th:"ชั่วโมง",en:"Hours"},m:{th:"นาที",en:"Mins"},s:{th:"วินาที",en:"Secs"}})[u][lang]}</span></div>`).join("")}</div>
+  <div class="cdl" id="cdl"></div>
   <div class="tap">${esc(T(UI.tap))}</div>
 </div></div></div>`,
 
@@ -776,6 +826,7 @@ function pages(){
     ${W.schedule.map(s=>`<div class="tl"><div class="time">${esc(T(s.time)).replace(" เป็นต้นไป","")}</div><div class="ev"><div class="what">${esc(T(s.what))}</div>${T(s.note)?(s.url?`<a class="note nlink" href="${s.url}" target="_blank" rel="noopener">📍 ${esc(T(s.note)).replace("ณ ","")}</a>`:`<div class="note">${esc(T(s.note)).replace("ณ ","").replace(" (Seasand Cafe)","")}</div>`):""}</div></div>`).join("")}
   </div>
   </div>
+  <button class="rsvp-btn" data-rsvp>✉ ${lang==="th"?"ลงทะเบียนร่วมงาน":"RSVP"}</button>
   <div class="vgrid">${[W.venueAM,W.venue].map(V=>`  <div class="venue vrow">
     <div class="vtxt"><div class="lbl">${esc(T(V.label))}</div>
     <h3>${esc(T(V.name))}</h3><div class="alt">${esc(T(V.sub))}</div>
@@ -832,7 +883,7 @@ const book = document.getElementById("book"), dots = document.getElementById("do
 const prev = document.getElementById("prev"), next = document.getElementById("next");
 let cur = 0, N = 0;
 
-function render(){
+function render(){ setTimeout(()=>{try{tick()}catch(e){}},0);
   const ps = pages(); N = ps.length;
   book.innerHTML = ps.join("");
   [...book.children].forEach((p,i)=>{ p.style.zIndex = N - i; if(i<cur) p.classList.add("flipped"); });
@@ -883,8 +934,100 @@ function applyTheme(){
 }
 document.querySelectorAll(".theme button").forEach(b=>b.onclick=()=>{theme=b.dataset.t;try{localStorage.setItem("wtheme",theme)}catch(e){};applyTheme();});
 
+/* ===== Background music: Canon in D (Pachelbel, public domain), synthesized in the browser ===== */
+const Music=(()=>{
+  let ctx=null,master=null,timer=null,next=0,step=0,on=false;
+  const N=n=>440*Math.pow(2,(n-69)/12);
+  // MIDI notes
+  const CH=[[62,66,69],[57,61,64],[59,62,66],[54,57,61],[55,59,62],[50,54,57],[55,59,62],[57,61,64]];
+  const BASS=[38,33,35,30,31,26,31,33];
+  const MEL=[[78,76],[74,73],[71,69],[71,73],[74,73],[71,69],[67,66],[67,69]]; // two notes per chord
+  const BEAT=0.92;
+  function tone(t,f,dur,g,type="sine",harm=0){
+    const o=ctx.createOscillator(),v=ctx.createGain();o.type=type;o.frequency.value=f;
+    v.gain.setValueAtTime(0,t);v.gain.linearRampToValueAtTime(g,t+0.015);v.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    o.connect(v);v.connect(master);o.start(t);o.stop(t+dur+0.05);
+    if(harm){const o2=ctx.createOscillator(),v2=ctx.createGain();o2.frequency.value=f*2;
+      v2.gain.setValueAtTime(0,t);v2.gain.linearRampToValueAtTime(g*harm,t+0.01);v2.gain.exponentialRampToValueAtTime(0.0001,t+dur*.5);
+      o2.connect(v2);v2.connect(master);o2.start(t);o2.stop(t+dur);}
+  }
+  function bar(t,i,cycle){
+    const c=CH[i];
+    tone(t,N(BASS[i]),BEAT*2.2,0.22,"sine");
+    const arp=[c[0],c[1],c[2],c[1]+12];
+    arp.forEach((n,k)=>tone(t+k*BEAT/2,N(n),1.8,0.07,"triangle",0.25));
+    if(cycle%3!==0){ const m=MEL[i]; tone(t,N(m[0]),BEAT*1.6,0.11,"sine",0.3); tone(t+BEAT,N(m[1]),BEAT*1.6,0.10,"sine",0.3); }
+    if(cycle%3===2){ tone(t+BEAT*0.5,N(MEL[i][0]-12),1.2,0.05,"triangle",0.2); }
+  }
+  function sched(){
+    while(next<ctx.currentTime+1.2){ bar(next,step%8,Math.floor(step/8)); next+=BEAT*2; step++; }
+  }
+  function start(){
+    if(!ctx){ctx=new (window.AudioContext||window.webkitAudioContext)();
+      master=ctx.createGain();master.gain.value=0;
+      const d=ctx.createDelay(),fb=ctx.createGain(),wet=ctx.createGain();d.delayTime.value=0.33;fb.gain.value=0.28;wet.gain.value=0.35;
+      master.connect(ctx.destination);master.connect(d);d.connect(fb);fb.connect(d);d.connect(wet);wet.connect(ctx.destination);}
+    ctx.resume();on=true;next=ctx.currentTime+0.1;
+    master.gain.cancelScheduledValues(ctx.currentTime);master.gain.setValueAtTime(master.gain.value,ctx.currentTime);master.gain.linearRampToValueAtTime(0.55,ctx.currentTime+2);
+    clearInterval(timer);timer=setInterval(sched,250);sched();ui();
+  }
+  function stop(){ if(!ctx)return; on=false; master.gain.linearRampToValueAtTime(0,ctx.currentTime+0.6); setTimeout(()=>{if(!on){clearInterval(timer);ctx.suspend();}},700); ui(); }
+  function ui(){const b=document.getElementById("musicBtn"); if(b){b.classList.toggle("on",on); b.title=on?"ปิดเพลง":"เปิดเพลง";}}
+  return {toggle(){on?stop():start()}, start, get on(){return on}};
+})();
+let musicStarted=false;
+document.getElementById("musicBtn").onclick=e=>{e.stopPropagation();musicStarted=true;try{Music.toggle()}catch(err){}};
+document.addEventListener("click",()=>{ if(!musicStarted){musicStarted=true; try{Music.start()}catch(err){}} },{once:false,capture:true});
+
+/* ===== countdown to 9 Jan 2027 18:00 (Bangkok) ===== */
+const EVENT=new Date("2027-01-09T18:00:00+07:00").getTime();
+function tick(){
+  const el=document.getElementById("cd"); if(!el) return;
+  let d=Math.max(0,EVENT-Date.now()); const v={d:Math.floor(d/864e5),h:Math.floor(d/36e5)%24,m:Math.floor(d/6e4)%60,s:Math.floor(d/1e3)%60};
+  el.querySelectorAll("b").forEach(b=>{const u=b.dataset.u; b.textContent=u==="d"?v.d:String(v[u]).padStart(2,"0");});
+  if(d===0){const l=document.getElementById("cdl"); if(l) l.textContent=lang==="th"?"ถึงวันงานแล้ว ♥":"It's the big day ♥";}
+}
+setInterval(tick,1000);
+
+/* ===== RSVP → Google Sheet (via Google Apps Script web app) ===== */
+const RSVP_URL = "https://script.google.com/macros/s/AKfycbzyPAfYaCtu3SmHnenzW3vcyYyu9TSPOn2VyyokFFRNY5l6PNN4xj3HsbmLjypDOj-HjA/exec";   // ← วาง URL ของ Google Apps Script ที่นี่ / paste the Apps Script web-app URL here
+const R=document.getElementById("rsvp"), RF=document.getElementById("rsvpForm");
+function rsvpText(){
+  const th=lang==="th";
+  document.getElementById("rsvpH").textContent=th?"ลงทะเบียนร่วมงาน":"RSVP";
+  document.getElementById("rsvpSub").textContent=th?"งานเลี้ยงวันเสาร์ที่ 9 มกราคม 2570":"Saturday, 9 January 2027";
+  document.getElementById("lName").textContent=th?"ชื่อ – นามสกุล":"Full name";
+  document.getElementById("lCount").textContent=th?"จำนวนผู้ร่วมงาน (รวมตัวท่าน)":"Number of guests (including you)";
+  document.getElementById("lSide").textContent=th?"แขกของฝ่าย":"Guest of";
+  document.getElementById("rsvpGo").textContent=th?"ส่งข้อมูล":"Send";
+  RF.count.innerHTML=Array.from({length:10},(_,i)=>`<option value="${i+1}">${i+1} ${th?"ท่าน":(i?"guests":"guest")}</option>`).join("");
+  const sv=RF.side.value;
+  RF.side.innerHTML=`<option value="" disabled ${sv?"":"selected"}>${th?"เลือกฝ่าย":"Choose"}</option><option value="เจ้าสาว">${th?"ฝ่ายเจ้าสาว (แอม)":"Bride (Amm)"}</option><option value="เจ้าบ่าว">${th?"ฝ่ายเจ้าบ่าว (กุ๊ก)":"Groom (Kook)"}</option>`;
+  if(sv) RF.side.value=sv;
+}
+function openRsvp(){ rsvpText(); document.getElementById("rsvpMsg").textContent=""; R.classList.add("open"); R.setAttribute("aria-hidden","false"); setTimeout(()=>RF.name.focus(),50); }
+function closeRsvp(){ R.classList.remove("open"); R.setAttribute("aria-hidden","true"); }
+document.addEventListener("click",e=>{ if(e.target.closest("[data-rsvp]")){e.preventDefault();e.stopPropagation();openRsvp();} });
+R.addEventListener("click",e=>{ if(e.target===R||e.target.closest("[data-close]")) closeRsvp(); });
+RF.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const th=lang==="th", msg=document.getElementById("rsvpMsg"), go=document.getElementById("rsvpGo");
+  const data={name:RF.name.value.trim(),count:RF.count.value,side:RF.side.value,lang};
+  if(!data.name||!data.side){ msg.textContent=th?"กรุณากรอกข้อมูลให้ครบ":"Please fill in all fields"; return; }
+  if(!RSVP_URL){ msg.textContent=th?"ระบบลงทะเบียนยังไม่เปิดใช้งาน":"RSVP is not open yet"; return; }
+  go.disabled=true; msg.textContent=th?"กำลังส่ง…":"Sending…";
+  try{
+    await fetch(RSVP_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams(data)});
+    msg.textContent=th?`ขอบคุณค่ะ คุณ${data.name} ลงทะเบียน ${data.count} ท่านเรียบร้อยแล้ว ♥`:`Thank you, ${data.name}! ${data.count} guest(s) registered ♥`;
+    try{localStorage.setItem("wrsvp",JSON.stringify(data))}catch(_){}
+    RF.name.value=""; setTimeout(closeRsvp,2600);
+  }catch(err){ msg.textContent=th?"ส่งไม่สำเร็จ กรุณาลองใหม่อีกครั้ง":"Could not send — please try again"; }
+  go.disabled=false;
+});
+
 render();
 applyTheme();
+tick();
 </script>
 </body>
 </html>
