@@ -444,10 +444,11 @@
   .dateline span{flex:1;height:1px;background:linear-gradient(90deg,transparent,#d9b0a5)}
   .dateline span:last-child{transform:scaleX(-1)}
   .dateline b{font:500 clamp(13.5px,4vw,15.5px) 'Prompt','Jost',sans-serif;color:var(--peach-d);white-space:nowrap;letter-spacing:.3px}
-  .ytpanel{position:fixed;top:60px;left:50%;transform:translate(-50%,-12px);z-index:70;width:min(86vw,300px);background:#fffaf6;border:1px solid #e6c4bb;border-radius:16px;
-    box-shadow:0 12px 30px rgba(80,50,45,.25);padding:8px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
-  .ytpanel.open{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
-  .ythead{display:flex;align-items:center;gap:6px;font:500 11.5px 'Jost','Prompt',sans-serif;color:var(--peach-d);padding:0 2px 6px}
+  .ytpanel{position:fixed;right:10px;bottom:74px;z-index:70;width:168px;background:#fffaf6;border:1px solid #e6c4bb;border-radius:14px;
+    box-shadow:0 10px 26px rgba(80,50,45,.25);padding:6px;opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .25s,transform .25s,width .25s}
+  .ytpanel.open{opacity:1;pointer-events:auto;transform:none}
+  .ytpanel.big{width:min(86vw,300px)}
+  .ythead{display:flex;align-items:center;gap:6px;font:500 10.5px 'Jost','Prompt',sans-serif;color:var(--peach-d);padding:0 2px 6px}
   .ythead span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .ythead button{border:0;background:none;color:var(--ink-soft);font-size:15px;cursor:pointer}
   .ytbox{position:relative;width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#f2e2dc}
@@ -470,7 +471,7 @@
 </div>
 <div class="mwrap"><button class="music" id="musicBtn" aria-label="Music">♪</button></div>
 <div class="ytpanel" id="ytPanel">
-  <div class="ythead"><span>♪ Forever and Ever and Always · Ryan Mack</span><button type="button" id="ytStop" aria-label="ปิดเพลง">✕</button></div>
+  <div class="ythead"><span>♪ Forever and Ever and Always</span><button type="button" id="ytStop" aria-label="ปิดเพลง">✕</button></div>
   <div class="ytbox" id="ytBox"></div>
 </div>
 <div class="lang" role="group" aria-label="Language">
@@ -492,7 +493,7 @@
     <div class="rsvp-cal" id="rsvpCal" hidden>
       <div class="rc-q" id="rcQ"></div>
       <a class="rc-b" id="rcG" target="_blank" rel="noopener"></a>
-      <a class="rc-b" id="rcA" download="AmmKook-Wedding.ics"></a>
+      <a class="rc-b" id="rcA"></a>
       <button type="button" class="rc-skip" data-close id="rcS"></button>
     </div>
   </form>
@@ -1034,26 +1035,29 @@ document.querySelectorAll(".theme button").forEach(b=>b.onclick=()=>{theme=b.dat
 /* ===== Music: official YouTube player (Forever and Ever and Always — Ryan Mack) ===== */
 const YT_ID="KZIxYD2LWCI";
 const Music=(()=>{
-  let on=false, open=false;
+  let on=false, big=false;
   const panel=()=>document.getElementById("ytPanel");
+  function cmd(f,args=[]){ const fr=document.querySelector("#ytBox iframe"); if(fr&&fr.contentWindow) fr.contentWindow.postMessage(JSON.stringify({event:"command",func:f,args}),"*"); }
   function load(){
     const box=document.getElementById("ytBox");
     if(!box.querySelector("iframe")){
       const f=document.createElement("iframe");
-      f.src="https://www.youtube-nocookie.com/embed/"+YT_ID+"?autoplay=1&loop=1&playlist="+YT_ID+"&playsinline=1&rel=0&modestbranding=1";
+      f.src="https://www.youtube-nocookie.com/embed/"+YT_ID+"?autoplay=1&loop=1&playlist="+YT_ID+"&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&origin="+encodeURIComponent(location.origin);
       f.allow="autoplay; encrypted-media"; f.title="Forever and Ever and Always — Ryan Mack"; f.setAttribute("frameborder","0");
+      f.addEventListener("load",()=>{ [300,1200,2500].forEach(t=>setTimeout(()=>{cmd("unMute");cmd("setVolume",[80]);cmd("playVideo");},t)); });
       box.appendChild(f);
     }
-    on=true;
+    on=true; panel().classList.add("open"); ui();
   }
-  function show(v){ open=v; panel().classList.toggle("open",v); ui(); }
-  function stop(){ const f=document.querySelector("#ytBox iframe"); if(f) f.remove(); on=false; show(false); }
-  function ui(){ const b=document.getElementById("musicBtn"); if(b){ b.classList.toggle("on",on); b.title=on?"เพลง":"เปิดเพลง"; } }
-  return { toggle(){ if(!on){ load(); show(true); } else show(!open); }, stop, start(){}, get on(){return on}, get running(){return true} };
+  function stop(){ const f=document.querySelector("#ytBox iframe"); if(f) f.remove(); on=false; panel().classList.remove("open","big"); big=false; ui(); }
+  function size(){ big=!big; panel().classList.toggle("big",big); }
+  function ui(){ const b=document.getElementById("musicBtn"); if(b){ b.classList.toggle("on",on); } }
+  return { toggle(){ if(!on) load(); else size(); }, start(){ if(!on) load(); else {cmd("unMute");cmd("playVideo");} }, stop, get on(){return on} };
 })();
 let musicStarted=false;
 document.getElementById("musicBtn").onclick=e=>{e.stopPropagation();musicStarted=true;try{Music.toggle()}catch(err){}};
-document.getElementById("ytStop").onclick=e=>{e.stopPropagation();Music.stop();};
+document.getElementById("ytStop").onclick=e=>{e.stopPropagation();musicStarted=true;Music.stop();};
+["pointerdown","touchstart","click","keydown"].forEach(ev=>document.addEventListener(ev,e=>{ if(musicStarted)return; if(e.target.closest&&e.target.closest("#musicBtn,#ytPanel"))return; musicStarted=true; try{Music.start()}catch(_){} },{capture:true,passive:true}));
 
 /* ===== countdown to 9 Jan 2027 18:00 (Bangkok) ===== */
 const EVENT=new Date("2027-01-09T18:00:00+07:00").getTime();
@@ -1076,7 +1080,9 @@ function calLinks(){
     "DTSTART:"+CAL.start,"DTEND:"+CAL.end,"SUMMARY:"+CAL.title,"LOCATION:"+CAL.loc.replace(/,/g,"\\,"),"DESCRIPTION:"+CAL.desc.replace(/,/g,"\\,"),
     "BEGIN:VALARM","TRIGGER:-P1D","ACTION:DISPLAY","DESCRIPTION:พรุ่งนี้งานแต่งแอม & กุ๊ก","END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n");
   document.getElementById("rcG").href=g;
-  document.getElementById("rcA").href="data:text/calendar;charset=utf-8,"+encodeURIComponent(ics);
+  const rcA=document.getElementById("rcA");
+  if(/github\.io$/.test(location.hostname)){ rcA.href=new URL("wedding.ics",location.href).href; rcA.removeAttribute("download"); }
+  else { rcA.href="data:text/calendar;charset=utf-8,"+encodeURIComponent(ics); rcA.setAttribute("download","AmmKook-Wedding.ics"); }
 }
 function showCal(){
   const th=lang==="th";
@@ -1084,7 +1090,12 @@ function showCal(){
   document.getElementById("rcG").textContent=th?"📅 Google Calendar":"📅 Google Calendar";
   document.getElementById("rcA").textContent=th?"🍎 ปฏิทิน iPhone / อื่นๆ (.ics)":"🍎 Apple / other calendars (.ics)";
   document.getElementById("rcS").textContent=th?"ไว้ทีหลัง":"Maybe later";
-  calLinks(); document.getElementById("rsvpCal").hidden=false;
+  calLinks();
+  const iOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+  const g=document.getElementById("rcG"), a=document.getElementById("rcA");
+  if(iOS){ g.parentNode.insertBefore(a,g); a.textContent=th?"📅 เพิ่มลงปฏิทิน iPhone":"📅 Add to iPhone Calendar"; g.textContent=th?"Google Calendar (กด Save มุมบน)":"Google Calendar (tap Save)"; }
+  else { g.textContent=th?"📅 Google Calendar (กด Save มุมบน)":"📅 Google Calendar (tap Save)"; }
+  document.getElementById("rsvpCal").hidden=false;
   ["name","count","side"].forEach(n=>RF[n].closest("label").style.display="none"); document.getElementById("rsvpGo").style.display="none";
 }
 function resetRsvp(){ document.getElementById("rsvpCal").hidden=true; ["name","count","side"].forEach(n=>RF[n].closest("label").style.display=""); document.getElementById("rsvpGo").style.display=""; }
