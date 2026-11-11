@@ -1034,6 +1034,9 @@ const Music=(()=>{
 })();
 document.addEventListener("visibilitychange",()=>{ const a=document.getElementById("bgm"); if(document.hidden) a.pause(); else if(Music.on) a.play().catch(()=>{}); });
 let musicStarted=false;
+/* try true autoplay on load (works where the browser allows it); otherwise start on first tap */
+window.addEventListener("load",()=>{ const a=document.getElementById("bgm"); a.volume=.8;
+  const pr=a.play(); if(pr&&pr.then) pr.then(()=>{ if(!musicStarted){ a.pause(); a.currentTime=0; musicStarted=true; Music.start(); } }).catch(()=>{}); });
 document.getElementById("musicBtn").onclick=e=>{e.stopPropagation();musicStarted=true;try{Music.toggle()}catch(err){}};
 ["pointerdown","touchstart","click","keydown"].forEach(ev=>document.addEventListener(ev,e=>{ if(musicStarted)return; if(e.target.closest&&e.target.closest("#musicBtn"))return; musicStarted=true; try{Music.start()}catch(_){} },{capture:true,passive:true}));
 
