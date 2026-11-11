@@ -444,6 +444,14 @@
   .dateline span{flex:1;height:1px;background:linear-gradient(90deg,transparent,#d9b0a5)}
   .dateline span:last-child{transform:scaleX(-1)}
   .dateline b{font:500 clamp(13.5px,4vw,15.5px) 'Prompt','Jost',sans-serif;color:var(--peach-d);white-space:nowrap;letter-spacing:.3px}
+  .ytpanel{position:fixed;top:60px;left:50%;transform:translate(-50%,-12px);z-index:70;width:min(86vw,300px);background:#fffaf6;border:1px solid #e6c4bb;border-radius:16px;
+    box-shadow:0 12px 30px rgba(80,50,45,.25);padding:8px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
+  .ytpanel.open{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
+  .ythead{display:flex;align-items:center;gap:6px;font:500 11.5px 'Jost','Prompt',sans-serif;color:var(--peach-d);padding:0 2px 6px}
+  .ythead span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ythead button{border:0;background:none;color:var(--ink-soft);font-size:15px;cursor:pointer}
+  .ytbox{position:relative;width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#f2e2dc}
+  .ytbox iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
   /* nav */
   .nav{display:flex;align-items:center;gap:16px;margin-top:12px;z-index:2}
   .nav button{width:42px;height:42px;border-radius:50%;border:1px solid #d9b0a5;background:rgba(255,255,255,.35);
@@ -461,6 +469,10 @@
   <button class="b2" data-t="water" title="Watercolor"></button>
 </div>
 <div class="mwrap"><button class="music" id="musicBtn" aria-label="Music">♪</button></div>
+<div class="ytpanel" id="ytPanel">
+  <div class="ythead"><span>♪ Forever and Ever and Always · Ryan Mack</span><button type="button" id="ytStop" aria-label="ปิดเพลง">✕</button></div>
+  <div class="ytbox" id="ytBox"></div>
+</div>
 <div class="lang" role="group" aria-label="Language">
   <button data-l="th" class="on">ไทย</button>
   <button data-l="en">EN</button>
@@ -1019,59 +1031,29 @@ function applyTheme(){
 document.querySelectorAll(".theme button").forEach(b=>b.onclick=()=>{theme=b.dataset.t;try{localStorage.setItem("wtheme",theme)}catch(e){};applyTheme();});
 
 /* ===== Background music: Salut d'Amour (Elgar, public domain), synthesized in the browser ===== */
+/* ===== Music: official YouTube player (Forever and Ever and Always — Ryan Mack) ===== */
+const YT_ID="KZIxYD2LWCI";
 const Music=(()=>{
-  let ctx=null,master=null,timer=null,next=0,step=0,on=false;
-  const N=n=>440*Math.pow(2,(n-69)/12);
-  function tone(t,f,dur,g,type="sine",harm=0){
-    const o=ctx.createOscillator(),v=ctx.createGain();o.type=type;o.frequency.value=f;
-    v.gain.setValueAtTime(0,t);v.gain.linearRampToValueAtTime(g,t+0.02);v.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-    o.connect(v);v.connect(master);o.start(t);o.stop(t+dur+0.05);
-    if(harm){const o2=ctx.createOscillator(),v2=ctx.createGain();o2.frequency.value=f*2;
-      v2.gain.setValueAtTime(0,t);v2.gain.linearRampToValueAtTime(g*harm,t+0.01);v2.gain.exponentialRampToValueAtTime(0.0001,t+dur*.5);
-      o2.connect(v2);v2.connect(master);o2.start(t);o2.stop(t+dur);}
+  let on=false, open=false;
+  const panel=()=>document.getElementById("ytPanel");
+  function load(){
+    const box=document.getElementById("ytBox");
+    if(!box.querySelector("iframe")){
+      const f=document.createElement("iframe");
+      f.src="https://www.youtube-nocookie.com/embed/"+YT_ID+"?autoplay=1&loop=1&playlist="+YT_ID+"&playsinline=1&rel=0&modestbranding=1";
+      f.allow="autoplay; encrypted-media"; f.title="Forever and Ever and Always — Ryan Mack"; f.setAttribute("frameborder","0");
+      box.appendChild(f);
+    }
+    on=true;
   }
-  /* --- Salut d'Amour, Op.12 (Edward Elgar, 1888 — public domain), simplified arrangement --- */
-  const SB=0.8; // seconds per beat
-  const E=[40,[56,59,64]],Cm=[37,[56,61,64]],A=[33,[57,61,64]],B7=[35,[57,59,63]],Gm7=[44,[56,60,63]],Fm=[42,[57,61,66]];
-  const SCH=[E,E,Cm,Cm,A,B7,E,E, E,Gm7,Cm,A,Fm,B7,E,E];
-  const SMEL=[
-    [[0,71,1],[1,80,2],[3,78,.5],[3.5,76,.5]], [[0,75,1],[1,73,1],[2,76,2]], [[0,73,1],[1,80,2],[3,78,1]], [[0,76,1],[1,75,1],[2,73,2]],
-    [[0,73,1],[1,81,2],[3,80,.5],[3.5,78,.5]], [[0,76,1],[1,78,1],[2,75,2]], [[0,76,3]], [[2,71,1],[3,73,1]],
-    [[0,76,1],[1,83,2],[3,81,.5],[3.5,80,.5]], [[0,78,1],[1,80,1],[2,76,2]], [[0,73,1],[1,80,2],[3,78,1]], [[0,76,1],[1,73,1],[2,69,2]],
-    [[0,69,1],[1,78,2],[3,76,1]], [[0,75,1],[1,73,1],[2,71,2]], [[0,76,3.5]], [] ];
-  function salutBar(t,k){
-    const i=k%16, [bass,ch]=SCH[i];
-    tone(t,N(bass),SB*3.6,0.2,"sine"); tone(t+SB*2,N(bass+12),SB*1.8,0.07,"sine");
-    [0.5,1,1.5,2.5,3,3.5].forEach((b,j)=>tone(t+b*SB,N(ch[j%3]),SB*1.4,0.035,"triangle",0.12));
-    SMEL[i].forEach(([b,n,d])=>tone(t+b*SB,N(n),SB*d*1.3+0.5,0.11,"sine",0.32));
-    return SB*4;
-  }
-  const SONGS=[{name:"Salut d'Amour · Elgar",bar:salutBar}];
-  const song=0;
-  function sched(){ while(next<ctx.currentTime+1.2){ next+=SONGS[song].bar(next,step); step++; } }
-  function init(){ if(ctx) return; ctx=new (window.AudioContext||window.webkitAudioContext)();
-    master=ctx.createGain();master.gain.value=0;
-    const d=ctx.createDelay(),fb=ctx.createGain(),wet=ctx.createGain();d.delayTime.value=0.33;fb.gain.value=0.3;wet.gain.value=0.38;
-    master.connect(ctx.destination);master.connect(d);d.connect(fb);fb.connect(d);d.connect(wet);wet.connect(ctx.destination); }
-  let keep=null;
-  function unlock(){
-    try{ if(navigator.audioSession) navigator.audioSession.type="playback"; }catch(_){}
-    try{ if(!keep){ keep=new Audio("data:audio/wav;base64,UklGRvQHAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YdAHAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA=="); keep.loop=true; keep.setAttribute("playsinline",""); keep.volume=0.01; } keep.play().catch(()=>{}); }catch(_){}
-    try{ const b=ctx.createBuffer(1,1,22050), src=ctx.createBufferSource(); src.buffer=b; src.connect(ctx.destination); src.start(0); }catch(_){}
-  }
-  function start(){ init(); unlock(); ctx.resume(); on=true; next=ctx.currentTime+0.1; step=0;
-    master.gain.cancelScheduledValues(ctx.currentTime);master.gain.setValueAtTime(master.gain.value,ctx.currentTime);master.gain.linearRampToValueAtTime(0.6,ctx.currentTime+2);
-    clearInterval(timer);timer=setInterval(sched,250);sched();ui(); }
-  function stop(){ if(!ctx)return; on=false; try{keep&&keep.pause()}catch(_){} master.gain.cancelScheduledValues(ctx.currentTime); master.gain.setValueAtTime(master.gain.value,ctx.currentTime); master.gain.linearRampToValueAtTime(0,ctx.currentTime+0.6); setTimeout(()=>{if(!on){clearInterval(timer);ctx.suspend();}},700); ui(); }
-  function toast(t){ let el=document.getElementById("mtoast"); if(!el){el=document.createElement("div");el.id="mtoast";el.className="mtoast";document.body.appendChild(el);}
-    el.textContent=t; el.classList.add("show"); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove("show"),2200); }
-  function ui(){const b=document.getElementById("musicBtn"); if(b){b.classList.toggle("on",on); b.title=on?"ปิดเพลง":"เปิดเพลง";}}
-  return {toggle(){on?stop():start()}, start, get on(){return on}, get running(){return !!ctx&&ctx.state==="running"}};
+  function show(v){ open=v; panel().classList.toggle("open",v); ui(); }
+  function stop(){ const f=document.querySelector("#ytBox iframe"); if(f) f.remove(); on=false; show(false); }
+  function ui(){ const b=document.getElementById("musicBtn"); if(b){ b.classList.toggle("on",on); b.title=on?"เพลง":"เปิดเพลง"; } }
+  return { toggle(){ if(!on){ load(); show(true); } else show(!open); }, stop, start(){}, get on(){return on}, get running(){return true} };
 })();
 let musicStarted=false;
 document.getElementById("musicBtn").onclick=e=>{e.stopPropagation();musicStarted=true;try{Music.toggle()}catch(err){}};
-["touchstart","touchend","pointerdown","pointerup","click","keydown"].forEach(ev=>document.addEventListener(ev,e=>{ if(e.target.closest&&e.target.closest("#musicBtn"))return; if(musicStarted&&Music.running)return; if(musicStarted&&!Music.on)return; musicStarted=true; try{Music.start()}catch(err){} },{capture:true,passive:true}));
-document.addEventListener("visibilitychange",()=>{ if(!document.hidden&&Music.on){ try{Music.start()}catch(_){} } });
+document.getElementById("ytStop").onclick=e=>{e.stopPropagation();Music.stop();};
 
 /* ===== countdown to 9 Jan 2027 18:00 (Bangkok) ===== */
 const EVENT=new Date("2027-01-09T18:00:00+07:00").getTime();
@@ -1144,7 +1126,6 @@ RF.addEventListener("submit",async e=>{
 });
 
 /* try to autoplay right away (works where the browser allows it; otherwise starts on the first touch) */
-window.addEventListener("load",()=>{ setTimeout(()=>{ try{ Music.start(); }catch(_){} },300); });
 render();
 applyTheme();
 tick();
