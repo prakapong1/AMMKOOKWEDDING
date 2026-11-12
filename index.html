@@ -413,6 +413,7 @@
   .rsvp-cal[hidden]{display:none}
   .rc-q{text-align:center;font-size:14px;color:var(--ink)}
   .rc-b{display:block;text-align:center;padding:10px;border-radius:999px;border:1px solid var(--peach-d);color:var(--peach-d);text-decoration:none;font:500 14px 'Prompt',sans-serif;background:#fff}
+  .rc-b.rc-alt{border:0;background:none;padding:4px;font-size:12.5px;text-decoration:underline;opacity:.85}
   .rc-skip{border:0;background:none;color:var(--ink-soft);font:400 13px 'Prompt',sans-serif;cursor:pointer;padding:4px}
   /* mobile spacing around RSVP */
   .p-inv .rsvp-btn{margin:14px auto 14px !important}
@@ -481,8 +482,8 @@
     <div class="rsvp-msg" id="rsvpMsg" role="status"></div>
     <div class="rsvp-cal" id="rsvpCal" hidden>
       <div class="rc-q" id="rcQ"></div>
-      <a class="rc-b" id="rcG" target="_blank" rel="noopener"></a>
       <a class="rc-b" id="rcA"></a>
+      <a class="rc-b" id="rcG" target="_blank" rel="noopener"></a>
       <button type="button" class="rc-skip" data-close id="rcS"></button>
     </div>
   </form>
@@ -494,6 +495,9 @@
 </div>
 
 <script>
+(function(){ try{ if(/\bLine\//i.test(navigator.userAgent)&&!/openExternalBrowser=1/.test(location.search)){
+  const u=new URL(location.href); u.searchParams.set("openExternalBrowser","1"); location.replace(u.href); } }catch(_){} })();
+
 /* =========================================================
    แก้ข้อมูลทั้งหมดได้ที่นี่ / Edit all content here
    ========================================================= */
@@ -1066,16 +1070,25 @@ function calLinks(){
   else { rcA.href="data:text/calendar;charset=utf-8,"+encodeURIComponent(ics); rcA.setAttribute("download","AmmKook-Wedding.ics"); }
 }
 function showCal(){
-  const th=lang==="th";
-  document.getElementById("rcQ").textContent=th?"เพิ่มวันงานลงในปฏิทินของคุณไหม?":"Add the wedding to your calendar?";
-  document.getElementById("rcG").textContent=th?"📅 Google Calendar":"📅 Google Calendar";
-  document.getElementById("rcA").textContent=th?"🍎 ปฏิทิน iPhone / อื่นๆ (.ics)":"🍎 Apple / other calendars (.ics)";
-  document.getElementById("rcS").textContent=th?"ไว้ทีหลัง":"Maybe later";
+  const th=lang==="th", ua=navigator.userAgent;
+  const iOS=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+  const android=/Android/i.test(ua);
   calLinks();
-  const iOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
   const g=document.getElementById("rcG"), a=document.getElementById("rcA");
-  if(iOS){ g.parentNode.insertBefore(a,g); a.textContent=th?"📅 เพิ่มลงปฏิทิน iPhone":"📅 Add to iPhone Calendar"; g.textContent=th?"Google Calendar (กด Save มุมบน)":"Google Calendar (tap Save)"; }
-  else { g.textContent=th?"📅 Google Calendar (กด Save มุมบน)":"📅 Google Calendar (tap Save)"; }
+  document.getElementById("rcQ").textContent=th?"เพิ่มวันงานลงในปฏิทินของคุณไหม?":"Add the wedding to your calendar?";
+  a.textContent=th?"📅 เพิ่มลงปฏิทินในโทรศัพท์":"📅 Add to my phone calendar";
+  g.textContent=th?"หรือเพิ่มผ่าน Google Calendar":"or use Google Calendar";
+  g.classList.add("rc-alt");
+  if(android){
+    // opens the phone's own Calendar app with the event pre-filled (falls back to Google Calendar)
+    const e=encodeURIComponent, desc=CAL.desc.replace(/\\n/g,"\n");
+    a.href="intent:#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.item/event"
+      +";S.title="+e(CAL.title)+";S.eventLocation="+e(CAL.loc)+";S.description="+e(desc)
+      +";l.beginTime="+Date.UTC(2027,0,9,11,30)+";l.endTime="+Date.UTC(2027,0,9,15,0)
+      +";S.browser_fallback_url="+e(g.href)+";end";
+    a.removeAttribute("download");
+  }
+  document.getElementById("rcS").textContent=th?"ไว้ทีหลัง":"Maybe later";
   document.getElementById("rsvpCal").hidden=false;
   ["name","count","side"].forEach(n=>RF[n].closest("label").style.display="none"); document.getElementById("rsvpGo").style.display="none";
 }

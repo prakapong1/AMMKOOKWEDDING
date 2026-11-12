@@ -1,0 +1,27 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//AmmKook//Wedding//TH
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:ammkook-20270109@prakapong1.github.io
+DTSTAMP:20261111T000000Z
+DTSTART:20270109T113000Z
+DTEND:20270109T150000Z
+SUMMARY:งานแต่งงาน แอม & กุ๊ก · Amm & Ko
+ ok Wedding
+LOCATION:ศรีสรรค์ คาเฟ่ขนมไทย (Seasan
+ d Cafe)\, เพชรบุรี
+DESCRIPTION:งานเลี้ยงฉลองมงคลสมรส
+  18:30 น. ณ ศรีสรรค์ คาเฟ่ขนมไทย
+ \nแผนที่: https://maps.app.goo.gl/HQQ1tSGciZHHWjpK7\n#AMMKOOKW
+ EDDING
+URL:https://prakapong1.github.io/AMMKOOKWEDDING/
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้งานแต่งแอม & กุ
+ ๊ก
+END:VALARM
+END:VEVENT
+END:VCALENDAR
