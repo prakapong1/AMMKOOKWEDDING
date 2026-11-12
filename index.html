@@ -374,7 +374,7 @@
     font-family:'Prompt','Jost',sans-serif;color:var(--ink);display:flex;flex-direction:column;gap:12px}
   .rsvp-x{position:absolute;top:8px;right:12px;border:0;background:none;font-size:24px;color:var(--ink-soft);cursor:pointer}
   .rsvp-h{font-size:20px;text-align:center;color:var(--peach-d)}
-  .rsvp-sub{font-size:12.5px;text-align:center;color:var(--ink-soft);margin-top:-6px}
+  .rsvp-sub{font-size:12.5px;text-align:center;color:var(--ink-soft);margin-top:-6px;white-space:pre-line;line-height:1.5}
   .rsvp-card label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--ink-soft)}
   .rsvp-card input,.rsvp-card select{font:400 15px 'Prompt',sans-serif;color:var(--ink);padding:10px 12px;border-radius:12px;border:1px solid #e6c4bb;background:#fff;outline:none;-webkit-appearance:none;appearance:none}
   .rsvp-card select{background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23a2685d' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 12px center}
@@ -663,6 +663,7 @@ const UI = {
 
 let lang = "th";
 try{ const s = localStorage.getItem("wlang"); if(s==="en"||s==="th") lang = s; }catch(e){}
+try{ const q = new URLSearchParams(location.search).get("lang"); if(q==="en"||q==="th"){ lang = q; localStorage.setItem("wlang",q); } }catch(e){}
 const T = v => (v && typeof v === "object") ? v[lang] : v;
 const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const dirURL = q => "https://www.google.com/maps/dir/?api=1&origin=" + encodeURIComponent(q) + "&destination=13.1137348,99.8906172&travelmode=driving";
@@ -1100,7 +1101,7 @@ const R=document.getElementById("rsvp"), RF=document.getElementById("rsvpForm");
 function rsvpText(){
   const th=lang==="th";
   document.getElementById("rsvpH").textContent=th?"ลงทะเบียนร่วมงาน":"RSVP";
-  document.getElementById("rsvpSub").textContent=th?"งานเลี้ยงวันเสาร์ที่ 9 มกราคม 2570":"Saturday, 9 January 2027";
+  document.getElementById("rsvpSub").textContent=th?"สำหรับงานเลี้ยงฉลองช่วงเย็น 18:00 น.\nวันเสาร์ที่ 9 มกราคม 2570 · ศรีสรรค์ คาเฟ่ขนมไทย":"For the evening reception, 6:00 PM\nSaturday, 9 January 2027 · Seasand Cafe";
   document.getElementById("lName").textContent=th?"ชื่อ – นามสกุล":"Full name";
   document.getElementById("lCount").textContent=th?"จำนวนผู้ร่วมงาน (รวมตัวท่าน)":"Number of guests (including you)";
   document.getElementById("lSide").textContent=th?"แขกของฝ่าย":"Guest of";
