@@ -550,7 +550,7 @@ const W = {
     {time:{th:"07:09 น.",en:"7:09 AM"}, what:{th:"พิธีสงฆ์",en:"Buddhist Blessing Ceremony"}, note:{th:"",en:""}},
     {time:{th:"08:15 น.",en:"8:15 AM"}, what:{th:"แห่ขันหมาก",en:"Khan Maak Procession"}, note:{th:"ณ บ้านเจ้าสาว",en:"At the bride's home"}, url:"https://maps.app.goo.gl/c4Dmy45MH7zgEjKn6"},
     {time:{th:"09:36 น.",en:"9:36 AM"}, what:{th:"พิธีรดน้ำสังข์",en:"Water Pouring Ceremony"}, note:{th:"ณ บ้านเจ้าสาว",en:"At the bride's home"}, url:"https://maps.app.goo.gl/c4Dmy45MH7zgEjKn6"},
-    {time:{th:"18:30 น. เป็นต้นไป",en:"From 6:30 PM"}, what:{th:"งานเลี้ยงฉลองมงคลสมรส",en:"Wedding Reception"}, note:{th:"ณ ศรีสรรค์ คาเฟ่ขนมไทย (Seasand Cafe)",en:"At Seasand Cafe — dinner & celebration"}}
+    {time:{th:"18:00 น. เป็นต้นไป",en:"From 6:00 PM"}, what:{th:"งานเลี้ยงฉลองมงคลสมรส",en:"Wedding Reception"}, note:{th:"ณ ศรีสรรค์ คาเฟ่ขนมไทย (Seasand Cafe)",en:"At Seasand Cafe — dinner & celebration"}}
   ],
   food: [
     {sec:"eat", ico:"bowl", photo:PHOTOS.paeuan, name:{th:"ข้าวแช่ป้าเอื้อน",en:"Khao Chae Pa Euan"},
@@ -629,7 +629,7 @@ const UI = {
   invite:{th:"ขอเรียนเชิญร่วมงานมงคลสมรส",en:"Together with their families"},
   together:{th:"พร้อมด้วยครอบครัวทั้งสองฝ่าย",en:"Together with their families"},
   coverInvite:{th:"ขอเรียนเชิญร่วมเป็นเกียรติ ในงานฉลองมงคลสมรส",en:"Invite you to celebrate their marriage"},
-  coverTime:{th:"ตั้งแต่เวลา 18:30 น. เป็นต้นไป",en:"From half past six in the evening"},
+  coverTime:{th:"ตั้งแต่เวลา 18:00 น. เป็นต้นไป",en:"From six o'clock in the evening"},
   inviteText:{th:"มีความยินดีขอเรียนเชิญเพื่อมาเป็นเกียรติ\nเนื่องในพิธีมงคลสมรส ระหว่าง",en:"request the pleasure of your company at the wedding celebration of"},
   and:{th:"และ",en:"and"},
   sorry:{th:"ขออภัยหากมิได้มาเรียนเชิญด้วยตัวเอง",en:"Please forgive us for not inviting you in person."},
@@ -1056,9 +1056,9 @@ setInterval(tick,1000);
 
 
 /* ===== Add to calendar ===== */
-const CAL={title:"งานแต่งงาน แอม & กุ๊ก · Amm & Kook Wedding",start:"20270109T113000Z",end:"20270109T150000Z",
+const CAL={title:"งานแต่งงาน แอม & กุ๊ก · Amm & Kook Wedding",start:"20270109T110000Z",end:"20270109T150000Z",
   loc:"ศรีสรรค์ คาเฟ่ขนมไทย (Seasand Cafe), เพชรบุรี",
-  desc:"งานเลี้ยงฉลองมงคลสมรส 18:30 น. ณ ศรีสรรค์ คาเฟ่ขนมไทย\\nแผนที่: https://maps.app.goo.gl/HQQ1tSGciZHHWjpK7\\n#AMMKOOKWEDDING"};
+  desc:"งานเลี้ยงฉลองมงคลสมรส 18:00 น. ณ ศรีสรรค์ คาเฟ่ขนมไทย\\nแผนที่: https://maps.app.goo.gl/HQQ1tSGciZHHWjpK7\\n#AMMKOOKWEDDING"};
 function calLinks(){
   const g="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent(CAL.title)+"&dates="+CAL.start+"/"+CAL.end+"&location="+encodeURIComponent(CAL.loc)+"&details="+encodeURIComponent(CAL.desc.replace(/\\n/g,"\n"));
   const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//AmmKook//Wedding//TH","BEGIN:VEVENT","UID:ammkook-20270109@wedding","DTSTAMP:20261110T000000Z",
@@ -1084,7 +1084,7 @@ function showCal(){
     const e=encodeURIComponent, desc=CAL.desc.replace(/\\n/g,"\n");
     a.href="intent:#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.item/event"
       +";S.title="+e(CAL.title)+";S.eventLocation="+e(CAL.loc)+";S.description="+e(desc)
-      +";l.beginTime="+Date.UTC(2027,0,9,11,30)+";l.endTime="+Date.UTC(2027,0,9,15,0)
+      +";l.beginTime="+Date.UTC(2027,0,9,11,0)+";l.endTime="+Date.UTC(2027,0,9,15,0)
       +";S.browser_fallback_url="+e(g.href)+";end";
     a.removeAttribute("download");
   }
@@ -1112,6 +1112,8 @@ function rsvpText(){
 }
 function openRsvp(){ resetRsvp(); rsvpText(); document.getElementById("rsvpMsg").textContent=""; R.classList.add("open"); R.setAttribute("aria-hidden","false"); setTimeout(()=>RF.name.focus(),50); }
 function closeRsvp(){ R.classList.remove("open"); R.setAttribute("aria-hidden","true"); }
+/* deep link from printed QR: ...?rsvp=1 or #rsvp opens the RSVP form */
+window.addEventListener("load",()=>{ if(/[?&]rsvp=1/.test(location.search)||location.hash==="#rsvp"){ setTimeout(()=>{ try{ go(1); }catch(_){} setTimeout(openRsvp,700); },400); } });
 document.addEventListener("click",e=>{ if(e.target.closest("[data-rsvp]")){e.preventDefault();e.stopPropagation();openRsvp();} });
 R.addEventListener("click",e=>{ if(e.target===R||e.target.closest("[data-close]")) closeRsvp(); });
 RF.addEventListener("submit",async e=>{
