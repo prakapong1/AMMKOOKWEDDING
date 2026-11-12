@@ -33,10 +33,13 @@
     padding:6px 12px;border-radius:999px;cursor:pointer;letter-spacing:.5px}
   .lang button.on{background:var(--peach-d);color:#fff}
 
-  /* petals */
-  .petal{position:fixed;top:-30px;width:14px;height:14px;border-radius:14px 0 14px 0;opacity:.55;
-    pointer-events:none;animation:fall linear infinite;z-index:0}
-  @keyframes fall{to{transform:translateY(110vh) rotate(540deg) translateX(40px)}}
+  /* petals: drift over the card */
+  .petal{position:fixed;top:0;left:0;pointer-events:none;z-index:40;will-change:transform;animation:fall linear infinite}
+  .petal i{display:block;width:100%;height:100%;background-position:center;background-size:contain;background-repeat:no-repeat;opacity:.85;
+    will-change:transform;animation:sway ease-in-out infinite alternate}
+  @keyframes fall{from{transform:translate3d(0,-60px,0)}to{transform:translate3d(var(--dx,40px),calc(100vh + 60px),0)}}
+  @keyframes sway{from{transform:translateX(-18px) rotate(-40deg)}to{transform:translateX(18px) rotate(220deg)}}
+  @media (prefers-reduced-motion:reduce){.petal{display:none}}
 
   /* book */
   .book{position:relative;width:min(92vw,440px);height:min(calc(100vh - 116px),840px);height:min(calc(100dvh - 116px),840px);perspective:1800px;z-index:2}
@@ -1006,15 +1009,26 @@ book.addEventListener("touchend", e=>{
   if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)*1.3) go(cur + (dx<0?1:-1));
 }, {passive:true});
 
-// petals
-const pc = ["#f6e2dc","#e7c4ba","#f2d6ce"];
-for(let i=0;i<(/Android/i.test(navigator.userAgent)?0:8);i++){
-  const d = document.createElement("div"); d.className="petal";
-  d.style.left = Math.random()*100+"vw"; d.style.background = pc[i%pc.length];
-  d.style.animationDuration = (9+Math.random()*9)+"s"; d.style.animationDelay = (-Math.random()*15)+"s";
-  d.style.transform = `scale(${.6+Math.random()*.7})`;
-  document.body.appendChild(d);
-}
+// petals: little blossoms and single petals drifting across the screen and over the card
+(function(){
+  const enc=v=>'url("data:image/svg+xml,'+encodeURIComponent(v)+'")';
+  const blossom=(c,d)=>enc(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="-12 -12 24 24">${[0,72,144,216,288].map(r=>`<path transform="rotate(${r})" d="M0 0C-4-3-4-9 0-11C4-9 4-3 0 0Z" fill="${c}"/>`).join("")}<circle r="2.2" fill="${d}"/></svg>`);
+  const leaf=c=>enc(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 1C15 4 18 10 10 19C2 10 5 4 10 1Z" fill="${c}"/><path d="M10 4V16" stroke="rgba(255,255,255,.55)" stroke-width=".8" fill="none"/></svg>`);
+  const imgs=[blossom("#f4c9cf","#f3dc8a"),blossom("#f7dcd3","#e9b8a8"),blossom("#e7d2ef","#f3dc8a"),leaf("#f2bfc4"),leaf("#f6d8cf"),leaf("#e9cfe9")];
+  const n=/Android/i.test(navigator.userAgent)?7:12;
+  for(let i=0;i<n;i++){
+    const d=document.createElement("div"); d.className="petal";
+    const size=12+Math.random()*12, img=imgs[i%imgs.length];
+    d.style.width=d.style.height=size+"px";
+    d.style.left=(Math.random()*100)+"vw";
+    d.style.setProperty("--dx",(Math.random()*120-40)+"px");
+    d.style.animationDuration=(11+Math.random()*10)+"s";
+    d.style.animationDelay=(-Math.random()*20)+"s";
+    const k=document.createElement("i"); k.style.backgroundImage=img;
+    k.style.animationDuration=(2.5+Math.random()*2.5)+"s"; k.style.animationDelay=(-Math.random()*4)+"s";
+    d.appendChild(k); document.body.appendChild(d);
+  }
+})();
 
 let theme="water";
 try{const t=localStorage.getItem("wtheme"); if(t==="blush"||t==="water") theme=t;}catch(e){}
