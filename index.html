@@ -176,10 +176,11 @@
   .card .thumb.icon{display:grid;place-items:center;background:rgba(255,255,255,.4)}
   .card .thumb .ico{width:60%;height:60%;fill:none;stroke:var(--peach-d);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;filter:none}
   .card .thumb.icon circle[r="1.4"],.card .thumb.icon circle[r="2.2"]{fill:var(--peach-d)}
-  .card.hotel{display:flex;align-items:center;gap:10px;padding:12px 14px}
+  .card.hotel{display:flex;align-items:center;gap:10px;padding:7px 14px;margin-bottom:7px}
   .card.hotel .hl{flex:1;min-width:0}
-  .card.hotel .dist{margin-bottom:5px}
-  .card.hotel .hr{display:flex;flex-direction:column;align-items:flex-end;gap:7px;flex-shrink:0;font-size:12.5px;font-weight:500}
+  .card.hotel .dist{margin-bottom:2px;padding:1px 9px}
+  .card.hotel h4 small.th{margin-top:0}
+  .card.hotel .hr{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;font-size:12.5px;font-weight:500}
   .card.hotel .hr a{color:var(--peach-d);text-decoration:none;white-space:nowrap}
   .cv2{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
   .cv2 .cvlogo{width:min(62%,240px);height:auto;margin-bottom:22px}
@@ -591,18 +592,26 @@ const W = {
      tel:"065-678-8156", q:"Cosmic cafe Cable Car Phetchaburi"}
   ],
   hotels: [
-    {km:"7", min:"13", name:"The Cozy Hotel (เดอะโคซี่)", price:"฿900–1,200",
-     desc:{th:"โรงแรมขนาดเล็กบรรยากาศอบอุ่นแบบบ้าน รีวิวดีมาก มีที่จอดรถฟรี ห่างเขาวังราว 2 กม.",en:"Small, homely hotel with excellent reviews and free parking, about 2 km from Khao Wang."},
-     addr:{th:"66/45 ม.6 ซ.ศุภโยคอุทิศ ต.คลองกระแชง อ.เมือง",en:"66/45 Moo 6, Soi Suppayok Uthit, Khlong Kra Saeng"},
-     tel:"097-465-2288", q:"The Cozy Hotel Phetchaburi"},
     {km:"7.5", min:"14", name:"HOP INN Phetchaburi (ฮ็อป อินน์)", price:"฿800–1,000",
      desc:{th:"โรงแรมเครือ HOP INN มาตรฐานเดียวกันทุกสาขา สะอาด มีแผนกต้อนรับ 24 ชม. และที่จอดรถ",en:"Reliable HOP INN chain hotel — clean, consistent rooms, 24-hour front desk and parking."},
      addr:{th:"222 ม.3 ต.บ้านหม้อ อ.เมือง",en:"222 Moo 3, Ban Mo"},
      tel:"02-659-2899", telNote:{th:"คอลเซ็นเตอร์",en:"call centre"}, q:"HOP INN Phetchaburi"},
+    {km:"8", min:"15", name:"Super Highway Hotel (ซูเปอร์ไฮเวย์)", price:"",
+     desc:{th:"โรงแรมใหม่ติดถนนเพชรเกษม ห้องสะอาด ที่จอดรถฟรี มีห้องอาหาร ติด 7-11 และใกล้โรบินสัน",en:"New hotel on Phetkasem Road with clean rooms, free parking and a restaurant, next to a 7-Eleven and near Robinson mall."},
+     addr:{th:"159 ม.2 ต.สมอพลือ อ.บ้านลาด",en:"159 Moo 2, Samo Phlue, Ban Lat"},
+     tel:"097-189-9159", q:"Super Highway Hotel Phetchaburi"},
+    {km:"7", min:"13", name:"The Cozy Hotel (เดอะโคซี่)", price:"฿900–1,200",
+     desc:{th:"โรงแรมขนาดเล็กบรรยากาศอบอุ่นแบบบ้าน รีวิวดีมาก มีที่จอดรถฟรี ห่างเขาวังราว 2 กม.",en:"Small, homely hotel with excellent reviews and free parking, about 2 km from Khao Wang."},
+     addr:{th:"66/45 ม.6 ซ.ศุภโยคอุทิศ ต.คลองกระแชง อ.เมือง",en:"66/45 Moo 6, Soi Suppayok Uthit, Khlong Kra Saeng"},
+     tel:"097-465-2288", q:"The Cozy Hotel Phetchaburi"},
     {km:"9", min:"17", name:"WIIN Phetchaburi (วิน เพชรบุรี)", price:"฿800–1,100",
      desc:{th:"โรงแรมใหม่สไตล์มินิมอล ห้องกว้าง มีคาเฟ่ BEGIIN สำหรับอาหารเช้า ใกล้พระรามราชนิเวศน์ (ไม่มีลิฟต์)",en:"New minimalist hotel with spacious rooms and BEGIIN café for breakfast, near Ban Puen Palace (no lift)."},
      addr:{th:"169 ม.6 ต.ต้นมะม่วง อ.เมือง",en:"169 Moo 6, Ton Mamuang"},
      tel:"082-926-9919", book:"https://www.agoda.com/search?textToSearch=WIIN%20Phetchaburi", bookLbl:{th:"จองผ่าน Agoda",en:"Book on Agoda"}, q:"WIIN Phetchaburi"},
+    {km:"6", min:"12", name:"R Resident Resort (อาร์ เรสซิเดนท์ รีสอร์ท)", price:"",
+     desc:{th:"รีสอร์ทขนาดเล็ก 16 ห้อง มีสวน ที่จอดรถฟรี ห่างตัวเมืองราว 3 กม. ใกล้วัดใหญ่สุวรรณาราม (ไม่มีลิฟต์)",en:"Small 16-room resort with a garden and free parking, about 3 km from the town centre near Wat Yai Suwannaram (no lift)."},
+     addr:{th:"80/4 ม.3 อ.เมือง",en:"80/4 Moo 3, Mueang Phetchaburi"},
+     q:"R Resident Resort Phetchaburi"},
     {km:"7", min:"14", name:"Mintara Phetburi (โรงแรมมินธารา)", price:{th:"ดูราคาใน Agoda",en:"See rates on Agoda"},
      desc:{th:"โรงแรมในตัวเมืองติดแม่น้ำเพชรบุรี ร่มรื่น มี Me Cafe' ในโรงแรม ใกล้ร้านอาหารริมน้ำหลายร้าน",en:"Leafy riverside hotel in town with Me Cafe' on site and riverside restaurants nearby."},
      addr:{th:"ริมแม่น้ำเพชรบุรี อ.เมือง",en:"Riverside, Mueang Phetchaburi"},
